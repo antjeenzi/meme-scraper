@@ -32,7 +32,7 @@ function main(data) {
   for (i = 0; i < 10; i++) {
     const fs = require('fs');
 
-    const file = fs.createWriteStream(`file${i}.jpg`);
+    const file = fs.createWriteStream(`memes${i}.jpg`);
     const requestNew = https.get(firstTenFullUrl[i], function(response) {
       response.pipe(file);
     });
