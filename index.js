@@ -42,25 +42,25 @@ function main(data) {
   );
   console.log('files saved');
 
+  //creates a folder "memes" if it doesn't exist yet
+  const fs = require('fs');
+  const dir = './memes';
+
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
   //loop for downloading the content behind each link and then saving it to a file
   for (i = 0; i < 10; i++) {
     const fs = require('fs');
 
-    const file = fs.createWriteStream(`memes${i}.jpg`);
+    const file = fs.createWriteStream(`./memes/memes${i}.jpg`);
     const requestNew = https.get(firstTenFullUrl[i], function(response) {
       response.pipe(file);
     });
   }
-}
-
-//creates a folder "memes" if it doesn't exist yet
-const fs = require('fs');
-const dir = './memes';
-
-try {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
-} catch (err) {
-  console.error(err);
 }
