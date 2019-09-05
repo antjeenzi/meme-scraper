@@ -1,4 +1,4 @@
-//this part will get the html from a given url and return it as a string, saved to the variable "data"
+//this part calls a package that will get the full html code from a given url and return it as one long string, saved to the variable "data"
 var https = require('https');
 let data;
 var options = {
@@ -19,12 +19,26 @@ request.on('error', function(e) {
 });
 request.end();
 
+//this part will use a package to decode encoded html urls
+const Entities = require('html-entities').AllHtmlEntities;
+const entities = new Entities();
+
 function main(data) {
-  matches = data.match(/"\/[^\n#]+watermark=none" style/g); //call the string method "match" on the data variable
-  firstTen = matches.slice(0, 10); //slice result to the first 10 urls
-  firstTenCropped = firstTen.map(url => url.slice(1, -7)); //apply the slice method to every element of the firstTen array, i.e. use a map to slice of the unnecessary "style"-tag at the end of each url
+  //call the string method "match" on the data variable (that now contains the full page as one html string)
+  matches = data.match(/"\/.+watermark=none" style/g);
+
+  //calls the decode package on every element of the matches map, i.e. on every url that's now singled out
+  matchesDecoded = matches.map(matchUrl => entities.decode(matchUrl));
+
+  //slice result of all urls to just the first 10 urls
+  firstTen = matchesDecoded.slice(0, 10);
+
+  //apply the slice method to every element of the firstTen array, i.e. use a map to slice of the unnecessary "style"-tag at the end of each url
+  firstTenCropped = firstTen.map(url => url.slice(1, -7));
+
+  //add the protocoll to the sliced urls
   firstTenFullUrl = firstTenCropped.map(
-    https => (https = `https://memegen.link${https}`) //add the protocoll to the sliced urls
+    https => (https = `https://memegen.link${https}`)
   );
   console.log('files saved');
 
@@ -37,4 +51,16 @@ function main(data) {
       response.pipe(file);
     });
   }
+}
+
+//creates a folder "memes" if it doesn't exist yet
+const fs = require('fs');
+const dir = './memes';
+
+try {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+} catch (err) {
+  console.error(err);
 }
