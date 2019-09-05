@@ -19,7 +19,7 @@ request.on('error', function(e) {
 });
 request.end();
 
-//this part will use a package to decode encoded html urls
+//this part will use a package to decode encoded/broken html urls
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
 
@@ -27,10 +27,10 @@ function main(data) {
   //call the string method "match" on the data variable (that now contains the full page as one html string)
   matches = data.match(/"\/.+watermark=none" style/g);
 
-  //calls the decode package on every element of the matches map, i.e. on every url that's now singled out
+  //calls the decode package (see above) on every element of the matches map, i.e. on every url that's now singled out
   matchesDecoded = matches.map(matchUrl => entities.decode(matchUrl));
 
-  //slice result of all urls to just the first 10 urls
+  //cuts the result of all urls to just the first 10 urls using the slice method
   firstTen = matchesDecoded.slice(0, 10);
 
   //apply the slice method to every element of the firstTen array, i.e. use a map to slice of the unnecessary "style"-tag at the end of each url
